@@ -14,12 +14,11 @@ namespace BusinessLayer.Implementation
         private readonly IConfiguration _configuration;
         private readonly ObjectCache _cache;
 
-        public ServiceFlights(IHttpClientFactory httpClientFactory, ILogger<ServiceFlights> logger, IConfiguration configuration/*, ObjectCache cache*/)
+        public ServiceFlights(IHttpClientFactory httpClientFactory, ILogger<ServiceFlights> logger, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
             _configuration = configuration;
-            //_cache = cache;
             _cache = MemoryCache.Default;
 
         }

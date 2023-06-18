@@ -29,6 +29,9 @@ namespace BusinessLayer.Implementation
         {
             try
             {
+                origin = origin.ToUpper();
+                destination = destination.ToUpper();
+
                 _logger.LogInformation($"Geting all Flights");
                 var flights = await _serviceFlights.GetFlights();
 
