@@ -26,22 +26,22 @@ namespace UnitTest_WebApi.BusinessLayer
 
             var flights = new List<FlightDto>
             {
-                new FlightDto { DepartureStation = "Origin", ArrivalStation = "Destination", FlightCarrier = "Carrier", FlightNumber = "123", Price = 100 }
+                new FlightDto { DepartureStation = "XXX", ArrivalStation = "YYY", FlightCarrier = "Carrier", FlightNumber = "123", Price = 100 }
             };
 
             _serviceFlightsMock.Setup(s => s.GetFlights()).ReturnsAsync(flights);
             //_flightGraphMock.Setup(g => g.BuildGraph(It.IsAny<List<FlightDto>>())).Returns(Task.CompletedTask);
-            _flightGraphMock.Setup(g => g.FindShortestRoute("Origin", "Destination")).ReturnsAsync(flights);
+            _flightGraphMock.Setup(g => g.FindShortestRoute("XXX", "YYY")).ReturnsAsync(flights);
 
             var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _flightGraphMock.Object);
 
             // Act
-            var result = await _routes.getRoute("Origin", "Destination");
+            var result = await _routes.getRoute("XXX", "YYY");
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.That(result.Origin, Is.EqualTo("Origin"));
-            Assert.That(result.Destination, Is.EqualTo("Destination"));
+            Assert.That(result.Origin, Is.EqualTo("XXX"));
+            Assert.That(result.Destination, Is.EqualTo("YYY"));
             Assert.That(result?.Flights?.Count, Is.EqualTo(1));
             Assert.That(result?.Flights?[0].Transport?.FlightCarrier, Is.EqualTo("Carrier"));
             Assert.That(result.Flights[0].Transport.FlightNumber, Is.EqualTo("123"));
@@ -63,7 +63,7 @@ namespace UnitTest_WebApi.BusinessLayer
             var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _flightGraphMock.Object);
 
             // Act and Assert
-            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _routes.getRoute("Origin", "Destination"));
+            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _routes.getRoute("XXX", "YYY"));
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace UnitTest_WebApi.BusinessLayer
 
             var flights = new List<FlightDto>
             {
-                new FlightDto { DepartureStation = "Origin1", ArrivalStation = "Destination", FlightCarrier = "Carrier", FlightNumber = "123", Price = 100 }
+                new FlightDto { DepartureStation = "XXX1", ArrivalStation = "YYY", FlightCarrier = "Carrier", FlightNumber = "123", Price = 100 }
             };
 
             _serviceFlightsMock.Setup(s => s.GetFlights()).ReturnsAsync(flights);
@@ -84,7 +84,7 @@ namespace UnitTest_WebApi.BusinessLayer
             var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _flightGraphMock.Object);
 
             // Act and Assert
-            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _routes.getRoute("Origin", "Destination"));
+            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _routes.getRoute("XXX", "YYY"));
         }
 
     }
