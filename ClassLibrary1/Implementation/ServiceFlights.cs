@@ -1,14 +1,9 @@
 ﻿using BusinessLayer.Interfaz;
 using DataAccess.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using System.Runtime.Caching;
 
 namespace BusinessLayer.Implementation
 {
@@ -17,16 +12,28 @@ namespace BusinessLayer.Implementation
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ServiceFlights> _logger;
         private readonly IConfiguration _configuration;
+        private readonly ObjectCache _cache;
 
-        public ServiceFlights(IHttpClientFactory httpClientFactory, ILogger<ServiceFlights> logger, IConfiguration configuration)
+        public ServiceFlights(IHttpClientFactory httpClientFactory, ILogger<ServiceFlights> logger, IConfiguration configuration/*, ObjectCache cache*/)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
             _configuration = configuration;
+            //_cache = cache;
+            _cache = MemoryCache.Default;
+
         }
         //public FlightDto GetFlights()
         public async Task<List<FlightDto>> GetFlights()
         {
+            // Verificar si el resultado está en caché
+            string cacheKey = "FlightsCacheKey";
+            if (_cache.Contains(cacheKey))
+            {
+                _logger.LogInformation("Retrieving flights from cache.");
+                return (List<FlightDto>)_cache.Get(cacheKey);
+            }
+
             HttpClient httpClient = _httpClientFactory.CreateClient();
 
             //string apiUrl = "https://recruiting-api.newshore.es/api/flights/2";
@@ -47,7 +54,10 @@ namespace BusinessLayer.Implementation
                     flights = JsonConvert.DeserializeObject<List<FlightDto>>(content);
 
                     _logger.LogInformation("Successfully deserialized response from api: ");
-                    //return content;
+
+                    CacheItemPolicy cachePolicy = new CacheItemPolicy();
+                    _cache.Set(cacheKey, flights, cachePolicy);
+
                 }
                 else
                 {
