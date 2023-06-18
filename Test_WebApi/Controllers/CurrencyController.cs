@@ -24,22 +24,22 @@ namespace Test_WebApi.Controllers
         {
             try
             {
-                _logger.LogInformation("Getting Journey");
-                _logger.LogDebug($"Getting Journey for Origin: {currency}");
+                _logger.LogInformation("Getting Currency");
+                _logger.LogDebug($"Getting Currency for Code: {currency}");
                 var result = await _serviceCurrency.GetCurrency(currency);
 
                 if (result == null)
                 {
-                    _logger.LogWarning("Cannot find the Journey");
-                    return NotFound("Cannot find the Journey");
+                    _logger.LogWarning("Cannot find the Currency");
+                    return NotFound("Cannot find the Currency");
                 }
 
-                _logger.LogInformation("Journey sent");
+                _logger.LogInformation("Currency sent");
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while getting the Journey");
+                _logger.LogError(ex, "An error occurred while getting the Currency");
                 return BadRequest(ex.Message);
             }
 
