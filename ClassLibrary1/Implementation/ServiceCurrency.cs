@@ -25,6 +25,7 @@ namespace BusinessLayer.Implementation
         }
         public async Task<CurrencyDTO> GetCurrency(string currency)
         {
+            currency = currency.ToUpper();
             string apiUrl = _configuration.GetSection("ApiConfig:ApiUrlCurrency").Value;
 
             HttpClient httpClient = _httpClientFactory.CreateClient();
@@ -62,7 +63,7 @@ namespace BusinessLayer.Implementation
             catch (Exception ex)
             {
                 _logger.LogError("An error occurred during the request to the Currency service: " + ex.Message);
-
+                throw new Exception("An error occurred while calling the Currency service.", ex);
             }
 
             return currencyResult;
