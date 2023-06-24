@@ -22,7 +22,7 @@ namespace BusinessLayer.Implementation
             _cache = MemoryCache.Default;
 
         }
-        //public FlightDto GetFlights()
+
         public async Task<List<FlightDto>> GetFlights()
         {
             // Verificar si el resultado está en caché

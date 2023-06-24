@@ -1,6 +1,7 @@
 using BusinessLayer.Implementation;
 using BusinessLayer.Interfaz;
 using DataAccess.DTOs;
+using DataAccess.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Test_WebApi.Controllers
@@ -24,6 +25,22 @@ namespace Test_WebApi.Controllers
         {
             try
             {
+                var routeRequest = new RouteRequestDTO
+                {
+                    Origin = origin,
+                    Destination = destination
+                };
+
+                var routeValidator = new RouteRequestValidator();
+
+                var validation = routeValidator.Validate(routeRequest);
+
+                if (!validation.IsValid)
+                {
+                    var errorMessages = validation.Errors.Select(x => x.ErrorMessage).ToList();
+                    return BadRequest(errorMessages);
+                }
+
                 _logger.LogInformation("Getting Journey");
                 _logger.LogDebug($"Getting Journey for Origin: {origin} and Destination: {destination}");
                 var result = await _route.getRoute(origin, destination);

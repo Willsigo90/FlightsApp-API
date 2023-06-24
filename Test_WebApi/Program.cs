@@ -1,6 +1,9 @@
 using BusinessLayer;
 using BusinessLayer.Implementation;
 using BusinessLayer.Interfaz;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using System.Reflection;
 
 Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingContext, config) =>
@@ -14,8 +17,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddCors();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+    //.AddFluentValidation(c =>
+    //{
+    //    c.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+    //});
+    
+
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient();
@@ -24,7 +33,9 @@ builder.Services.AddScoped<IRoutes, Routes>();
 
 builder.Services.AddTransient<IServiceFlights, ServiceFlights>();
 
-builder.Services.AddScoped<IFlightGraph, FlightGraph>();
+//builder.Services.AddScoped<IFlightBuilder, FlightBuilder>();
+builder.Services.AddScoped<IGraphBuilder, GraphBuilder>();
+builder.Services.AddScoped<IShortestRouteFinder, ShortestRouteFinder>();
 
 builder.Services.AddTransient<IServiceCurrency, ServiceCurrency>();
 

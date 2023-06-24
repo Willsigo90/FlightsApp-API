@@ -9,6 +9,8 @@ using DataAccess.DTOs;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using DataAccess.Models;
+using DataAccess.Validators;
+using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLayer.Implementation
 {
@@ -16,13 +18,17 @@ namespace BusinessLayer.Implementation
     {
         private readonly IServiceFlights _serviceFlights;
         private readonly ILogger<Routes> _logger;
-        private readonly IFlightGraph _flightGraph;
+        //private readonly IFlightBuilder _flightGraph;
+        private readonly IGraphBuilder _graphBuilder;
+        private readonly IShortestRouteFinder _shortestRouteFinder;
 
-        public Routes(IServiceFlights serviceFlights, ILogger<Routes> logger, IFlightGraph flightGraph) 
+        public Routes(IServiceFlights serviceFlights, ILogger<Routes> logger, IGraphBuilder graphBuilder, IShortestRouteFinder shortestRouteFinder) 
         {
             _serviceFlights = serviceFlights;
             _logger = logger;
-            _flightGraph = flightGraph;
+            //_flightGraph = flightGraph;
+            _graphBuilder = graphBuilder;
+            _shortestRouteFinder = shortestRouteFinder;
         }
 
         public async Task<Journey> getRoute(string origin, string destination)
@@ -54,30 +60,32 @@ namespace BusinessLayer.Implementation
                 }
 
                 _logger.LogInformation($"Start Building Graph");
-                await _flightGraph.BuildGraph(flights);
+                var adjacencyList = await _graphBuilder.BuildGraph(flights);
 
                 _logger.LogInformation($"Finding route by origin and destination");
-                var shortestRoute = await _flightGraph.FindShortestRoute(origin, destination);
+                var shortestRoute = await _shortestRouteFinder.FindShortestRoute(origin, destination, adjacencyList);
 
                 //Map FlightDto to Flight
-                List<Flight> flightList = shortestRoute.Select(flightDto => new Flight
+                List<Flight> flightList = shortestRoute.Select(flightDto => new Flight(
+                    new Transport(flightDto.FlightCarrier, flightDto.FlightNumber),
+                    flightDto?.DepartureStation,
+                    flightDto?.ArrivalStation,
+                    flightDto.Price
+                )).ToList();
+
+
+
+                var journey = new Journey(origin, destination, shortestRoute.Sum(c => c.Price), flightList);
+
+                var journeyValidator = new JourneyValidator();
+
+                var validation = journeyValidator.Validate(journey);
+
+                if(validation.IsValid == false)
                 {
-                    Transport = new Transport
-                    {
-                        FlightCarrier = flightDto.FlightCarrier,
-                        FlightNumber = flightDto.FlightNumber
-                    },
-                    Origin = flightDto.DepartureStation,
-                    Destination = flightDto.ArrivalStation,
-                    Price = flightDto.Price
-                }).ToList();
-
-                var journey = new Journey();
-
-                journey.Origin = origin;
-                journey.Destination = destination;
-                journey.Flights = flightList;
-                journey.Price = shortestRoute.Sum(c => c.Price);
+                    var errorMessages = "Error in server site: " + validation.ToString();
+                    throw new ValidationException(errorMessages);
+                }
 
                 _logger.LogInformation($"Journey found");
                 return journey;

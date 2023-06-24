@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "rjw8Cs+RYN/V8wPGHMPqqdkRxzrorcdST/c6IlbCk5A9Dx3V+8jBk0zh3rx36iTuNv3F422AMdqoxXR3oHu6JA==",
+  "dgSpecHash": "Qo1DjMpt04IGY9HBRgmqdVg9wsx70eqHBuBtcCvE9lGQlGCcLgCJ9CKm/Q9kFB4fTK4ulxt58IFbnkHi/mk9ug==",
   "success": true,
   "projectFilePath": "C:\\Users\\will\\source\\repos\\Test_WebApi\\UnitTest_WebApi\\UnitTest_WebApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\will\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\will\\.nuget\\packages\\coverlet.collector\\3.1.2\\coverlet.collector.3.1.2.nupkg.sha512",
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation\\11.5.1\\fluentvalidation.11.5.1.nupkg.sha512",
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",
     "C:\\Users\\will\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\will\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.2.0\\microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
     "C:\\Users\\will\\.nuget\\packages\\microsoft.codecoverage\\17.1.0\\microsoft.codecoverage.17.1.0.nupkg.sha512",

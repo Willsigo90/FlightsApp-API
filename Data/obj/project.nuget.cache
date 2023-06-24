@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "N8JcxzHqmoTeI299t41wli2NcghRJacdwCPEXCQKAKI8D7h6oHO1jBcKtn1Ir3M51nYKlWvOukE/W6hLWT2QeA==",
+  "dgSpecHash": "2q5DOA8kogA37K+lzR6O1bve/bgq/lxpfNkX3D/YDxF5Aqpw2BJUoVOEV4kN5425IfP5inIJST4apyg2JHsEbw==",
   "success": true,
   "projectFilePath": "C:\\Users\\will\\source\\repos\\Test_WebApi\\Data\\DataAccess.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation\\11.5.1\\fluentvalidation.11.5.1.nupkg.sha512",
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",
+    "C:\\Users\\will\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\2.1.0\\microsoft.extensions.dependencyinjection.abstractions.2.1.0.nupkg.sha512"
+  ],
   "logs": []
 }

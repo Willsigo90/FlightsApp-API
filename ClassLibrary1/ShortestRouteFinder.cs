@@ -1,5 +1,4 @@
-﻿using BusinessLayer.Implementation;
-using DataAccess.DTOs;
+﻿using DataAccess.DTOs;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,41 +8,16 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer
 {
-    public class FlightGraph : IFlightGraph
+    public class ShortestRouteFinder: IShortestRouteFinder
     {
-        private Dictionary<string, List<FlightDto>>? adjacencyList;
-        private ILogger<FlightGraph> _logger;
+        //private Dictionary<string, List<FlightDto>>? adjacencyList;
+        private ILogger<ShortestRouteFinder> _logger;
 
-        public FlightGraph(ILogger<FlightGraph> logger)
+        public ShortestRouteFinder(ILogger<ShortestRouteFinder> logger)
         {
             _logger = logger;
         }
-
-
-        public async Task<Dictionary<string, List<FlightDto>>> BuildGraph(List<FlightDto> flights)
-        {
-            try
-            {
-                adjacencyList = new Dictionary<string, List<FlightDto>>();
-
-                foreach (var flight in flights)
-                {
-                    if (!adjacencyList.ContainsKey(flight.DepartureStation))
-                        adjacencyList[flight.DepartureStation] = new List<FlightDto>();
-
-                    adjacencyList[flight.DepartureStation].Add(flight);
-                }
-                return adjacencyList;
-            }
-            catch (Exception ex)
-            {
-                // Handle the exception or re-throw it if necessary
-                _logger.LogError($"an error occurred while getting the route: {ex.Message}");
-                throw new Exception("An error occurred while building the flight graph.", ex);
-            }
-        }
-
-        public async Task<List<FlightDto>> FindShortestRoute(string source, string destination)
+        public async Task<List<FlightDto>> FindShortestRoute(string source, string destination, Dictionary<string, List<FlightDto>>? adjacencyList)
         {
             try
             {

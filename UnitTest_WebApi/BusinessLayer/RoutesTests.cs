@@ -22,7 +22,7 @@ namespace UnitTest_WebApi.BusinessLayer
             // Arrange
             var _serviceFlightsMock = new Mock<IServiceFlights>();
             var _loggerMock = new Mock<ILogger<Routes>>();
-            var _flightGraphMock = new Mock<IFlightGraph>();
+            var _flightGraphMock = new Mock<IFlightBuilder>();
 
             var flights = new List<FlightDto>
             {
@@ -56,7 +56,7 @@ namespace UnitTest_WebApi.BusinessLayer
             var _serviceFlightsMock = new Mock<IServiceFlights>();
             var flights = new List<FlightDto>();
             var _loggerMock = new Mock<ILogger<Routes>>();
-            var _flightGraphMock = new Mock<IFlightGraph>();
+            var _flightGraphMock = new Mock<IFlightBuilder>();
 
             _serviceFlightsMock.Setup(s => s.GetFlights()).ReturnsAsync(flights);
 
@@ -72,7 +72,7 @@ namespace UnitTest_WebApi.BusinessLayer
             // Arrange
             var _serviceFlightsMock = new Mock<IServiceFlights>();
             var _loggerMock = new Mock<ILogger<Routes>>();
-            var _flightGraphMock = new Mock<IFlightGraph>();
+            var _flightGraphMock = new Mock<IFlightBuilder>();
 
             var flights = new List<FlightDto>
             {

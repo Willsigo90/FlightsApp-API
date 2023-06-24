@@ -8,9 +8,33 @@ namespace DataAccess.Models
 {
     public class Flight
     {
-        public Transport? Transport { get; set; }
-        public string? Origin { get; set; }
-        public string? Destination { get; set; }
-        public double Price { get; set; }
+        private readonly Transport? transport;
+        private readonly string? origin;
+        private readonly string? destination;
+        private readonly double price;
+        
+        public Flight(Transport transport, string origin, string destination, double price)
+        {
+            this.origin = origin;
+            this.destination = destination;
+            this.price = price;
+            this.transport = transport;
+        }
+        public Transport Transport
+        {
+            get { return transport; }
+        }
+        public string Origin
+        {
+            get { return origin; }
+        }
+        public string Destination
+        {
+            get { return destination; }
+        }
+        public double Price
+        {
+            get { return price; }
+        }
     }
 }

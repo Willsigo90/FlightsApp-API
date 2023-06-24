@@ -8,10 +8,34 @@ namespace DataAccess.Models
 {
     public class Journey
     {
-        public string? Origin { get; set; }
-        public string? Destination { get; set; }
-        public int Price { get; set; }
-        public List<Flight>? Flights { get; set; }
+        private readonly string? origin;
+        private readonly string? destination;
+        private readonly double price;
+        private readonly List<Flight>? flights;
 
+        public Journey(string origin, string destination, double price, List<Flight> flights)
+        {
+            this.origin = origin;
+            this.destination = destination;
+            this.price = price;
+            this.flights = flights;
+        }
+
+        public string Origin
+        {
+            get { return origin; }
+        }
+        public string Destination
+        {
+            get { return destination; }
+        }
+        public double Price
+        {
+            get { return price; }
+        }
+        public List<Flight> Flights
+        {
+            get { return flights; }
+        }
     }
 }

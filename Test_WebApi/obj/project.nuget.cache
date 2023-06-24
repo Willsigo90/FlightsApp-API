@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "xAG2GB8e/7vOr3q0u5xb7UOkt8Xe0iAj+lehbhNMh7Vbcg0eTS40SAgSNO8MVRrKve15Yxndn80+xb+30+DoHQ==",
+  "dgSpecHash": "vTY5OHGRFNtv6X90Qf996EH+hFC3j3j0mQemfwHGFtrdahzhxvqcJOhM8t95hT072WFRWGb7My6DPaDEpG+jcw==",
   "success": true,
   "projectFilePath": "C:\\Users\\will\\source\\repos\\Test_WebApi\\Test_WebApi\\ApiFlights.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation\\11.5.1\\fluentvalidation.11.5.1.nupkg.sha512",
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
+    "C:\\Users\\will\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",
     "C:\\Users\\will\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\will\\.nuget\\packages\\microsoft.extensions.configuration\\7.0.0\\microsoft.extensions.configuration.7.0.0.nupkg.sha512",
     "C:\\Users\\will\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\7.0.0\\microsoft.extensions.configuration.abstractions.7.0.0.nupkg.sha512",
