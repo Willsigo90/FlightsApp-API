@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Caching;
+using DataAccess.Models;
+using System.Reflection.Metadata;
 
 namespace BusinessLayer.Implementation
 {
@@ -16,15 +19,29 @@ namespace BusinessLayer.Implementation
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ServiceFlights> _logger;
         private readonly IConfiguration _configuration;
+        private readonly ObjectCache _cache;
 
         public ServiceCurrency(IHttpClientFactory httpClientFactory, ILogger<ServiceFlights> logger, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
             _configuration = configuration;
+            _cache = MemoryCache.Default;
         }
         public async Task<CurrencyDTO> GetCurrency(string currency)
         {
+            if (string.IsNullOrEmpty(currency))
+            {
+                throw new ArgumentException("The parameter cannot be null or empty.", nameof(currency));
+            }
+            string cacheKey = currency.ToUpper();
+            // Verificar si el resultado está en caché
+            if (_cache.Contains(cacheKey))
+            {
+                _logger.LogInformation("Retrieving currency from cache.");
+                return (CurrencyDTO)_cache.Get(cacheKey);
+            }
+
             currency = currency.ToUpper();
             string apiUrl = _configuration.GetSection("ApiConfig:ApiUrlCurrency").Value;
 
@@ -50,6 +67,9 @@ namespace BusinessLayer.Implementation
 
                     currencyResult.Rate = zwlRate;
                     currencyResult.Currency = currency;
+
+                    CacheItemPolicy cachePolicy = new CacheItemPolicy();
+                    _cache.Set(cacheKey, currencyResult, cachePolicy);
 
                     _logger.LogInformation("Successfully deserialized response from api: ");
 

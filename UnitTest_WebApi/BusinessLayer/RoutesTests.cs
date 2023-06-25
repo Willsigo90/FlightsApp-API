@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccess.Models;
 
 namespace UnitTest_WebApi.BusinessLayer
 {
@@ -22,21 +23,45 @@ namespace UnitTest_WebApi.BusinessLayer
             // Arrange
             var _serviceFlightsMock = new Mock<IServiceFlights>();
             var _loggerMock = new Mock<ILogger<Routes>>();
-            var _flightGraphMock = new Mock<IFlightBuilder>();
+            var _graphBuilderMock = new Mock<IGraphBuilder>();
+            var _shortestRouteFinderMock = new Mock<IShortestRouteFinder>();
+            var _journeyBuilderMock = new Mock<IJourneyBuilder>();
 
-            var flights = new List<FlightDto>
+            var origin = "XXX";
+            var destination = "YYY";
+            var flightCarrier = "Carrier";
+            var flightNumber = "123";
+
+            var flights = new List<Flight>
             {
-                new FlightDto { DepartureStation = "XXX", ArrivalStation = "YYY", FlightCarrier = "Carrier", FlightNumber = "123", Price = 100 }
+                new Flight(new Transport(flightCarrier, flightNumber),origin, destination, 100)
             };
 
-            _serviceFlightsMock.Setup(s => s.GetFlights()).ReturnsAsync(flights);
-            //_flightGraphMock.Setup(g => g.BuildGraph(It.IsAny<List<FlightDto>>())).Returns(Task.CompletedTask);
-            _flightGraphMock.Setup(g => g.FindShortestRoute("XXX", "YYY")).ReturnsAsync(flights);
+            var graph = new Dictionary<string, List<FlightDto>>();
 
-            var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _flightGraphMock.Object);
+            var journey = new Journey(origin, destination, 100, flights);
+
+            var flightsList = new List<FlightDto>
+            {
+                new FlightDto
+                {
+                    DepartureStation = "XXX",
+                    ArrivalStation = "YYY",
+                    FlightCarrier = "Carrier",
+                    FlightNumber = "123",
+                    Price = 100
+                }
+            };
+
+            _serviceFlightsMock.Setup(x => x.GetFlights()).ReturnsAsync(flightsList);
+            _graphBuilderMock.Setup(x => x.BuildGraph(flightsList)).ReturnsAsync(graph);
+            _shortestRouteFinderMock.Setup(x => x.FindShortestRoute(origin, destination, graph)).ReturnsAsync(flightsList);
+            _journeyBuilderMock.Setup(x => x.buildJourney(origin, destination, flightsList)).ReturnsAsync(journey);
+
+            var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _graphBuilderMock.Object, _shortestRouteFinderMock.Object, _journeyBuilderMock.Object);
 
             // Act
-            var result = await _routes.getRoute("XXX", "YYY");
+            var result = await _routes.getOneWayJourney("XXX", "YYY");
 
             // Assert
             Assert.IsNotNull(result);
@@ -53,17 +78,19 @@ namespace UnitTest_WebApi.BusinessLayer
         public async Task GetRoute_WithEmptyFlights_ReturnsKeyNotFoundException()
         {
             // Arrange
-            var _serviceFlightsMock = new Mock<IServiceFlights>();
             var flights = new List<FlightDto>();
+            var _serviceFlightsMock = new Mock<IServiceFlights>();
             var _loggerMock = new Mock<ILogger<Routes>>();
-            var _flightGraphMock = new Mock<IFlightBuilder>();
+            var _graphBuilderMock = new Mock<IGraphBuilder>();
+            var _shortestRouteFinderMock = new Mock<IShortestRouteFinder>();
+            var _journeyBuilderMock = new Mock<IJourneyBuilder>();
 
             _serviceFlightsMock.Setup(s => s.GetFlights()).ReturnsAsync(flights);
 
-            var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _flightGraphMock.Object);
+            var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _graphBuilderMock.Object, _shortestRouteFinderMock.Object, _journeyBuilderMock.Object);
 
             // Act and Assert
-            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _routes.getRoute("XXX", "YYY"));
+            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _routes.getOneWayJourney("XXX", "YYY"));
         }
 
         [Test]
@@ -72,7 +99,9 @@ namespace UnitTest_WebApi.BusinessLayer
             // Arrange
             var _serviceFlightsMock = new Mock<IServiceFlights>();
             var _loggerMock = new Mock<ILogger<Routes>>();
-            var _flightGraphMock = new Mock<IFlightBuilder>();
+            var _graphBuilderMock = new Mock<IGraphBuilder>();
+            var _shortestRouteFinderMock = new Mock<IShortestRouteFinder>();
+            var _journeyBuilderMock = new Mock<IJourneyBuilder>();
 
             var flights = new List<FlightDto>
             {
@@ -81,10 +110,10 @@ namespace UnitTest_WebApi.BusinessLayer
 
             _serviceFlightsMock.Setup(s => s.GetFlights()).ReturnsAsync(flights);
 
-            var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _flightGraphMock.Object);
+            var _routes = new Routes(_serviceFlightsMock.Object, _loggerMock.Object, _graphBuilderMock.Object, _shortestRouteFinderMock.Object, _journeyBuilderMock.Object);
 
             // Act and Assert
-            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _routes.getRoute("XXX", "YYY"));
+            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _routes.getOneWayJourney("XXX", "YYY"));
         }
 
     }

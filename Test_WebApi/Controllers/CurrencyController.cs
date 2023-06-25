@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Implementation;
 using BusinessLayer.Interfaz;
 using DataAccess.DTOs;
+using DataAccess.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Test_WebApi.Controllers
@@ -22,6 +23,10 @@ namespace Test_WebApi.Controllers
         [HttpGet(Name = "GetCurrency")]
         public async Task<IActionResult> Get(string currency)
         {
+            if (string.IsNullOrEmpty(currency))
+            {
+                throw new ArgumentException("The parameter cannot be null or empty.", nameof(currency));
+            }
             try
             {
                 _logger.LogInformation("Getting Currency");
@@ -32,6 +37,16 @@ namespace Test_WebApi.Controllers
                 {
                     _logger.LogWarning("Cannot find the Currency");
                     return NotFound("Cannot find the Currency");
+                }
+
+                var routeValidator = new CurrencyValidator();
+
+                var validation = routeValidator.Validate(result);
+
+                if (!validation.IsValid)
+                {
+                    var errorMessages = validation.Errors.Select(x => x.ErrorMessage).ToList();
+                    return BadRequest(errorMessages);
                 }
 
                 _logger.LogInformation("Currency sent");

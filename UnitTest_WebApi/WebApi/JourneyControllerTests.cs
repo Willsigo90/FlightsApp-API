@@ -26,13 +26,16 @@ namespace UnitTest_WebApi.WebApi
             string origin = "XXX";
             string destination = "YYY";
 
-            var resultJourney = new Journey()
-            {
-                Origin = origin,
-                Destination = destination
-            };
+            var goingJourny = new Journey(origin, destination, 100, new List<Flight>());
+            var returnJourny = new Journey(destination, origin, 100, new List<Flight>());
 
-            _routeMock.Setup(x => x.getRoute(origin, destination)).ReturnsAsync(resultJourney);
+            var completeJourney = new List<Journey>();
+
+            completeJourney.Add(goingJourny);
+            completeJourney.Add(returnJourny);
+
+
+            _routeMock.Setup(x => x.getRoundTripJourney(origin, destination)).ReturnsAsync(completeJourney);
 
             var _journeyController = new JourneyController(_loggerMock.Object, _routeMock.Object);
 
@@ -41,8 +44,10 @@ namespace UnitTest_WebApi.WebApi
 
             // Assert
             Assert.IsInstanceOf<OkObjectResult>(result);
-            Assert.That(((Journey)((Microsoft.AspNetCore.Mvc.ObjectResult)result).Value).Destination.Equals("YYY"));
-            Assert.That(((Journey)((Microsoft.AspNetCore.Mvc.ObjectResult)result).Value).Origin.Equals("XXX"));
+            Assert.That(((List<Journey>)((Microsoft.AspNetCore.Mvc.ObjectResult)result).Value)[0].Destination.Equals("YYY"));
+            Assert.That(((List<Journey>)((Microsoft.AspNetCore.Mvc.ObjectResult)result).Value)[0].Origin.Equals("XXX"));
+            Assert.That(((List<Journey>)((Microsoft.AspNetCore.Mvc.ObjectResult)result).Value)[1].Destination.Equals("XXX"));
+            Assert.That(((List<Journey>)((Microsoft.AspNetCore.Mvc.ObjectResult)result).Value)[1].Origin.Equals("YYY"));
         }
 
         [Test]
@@ -77,7 +82,7 @@ namespace UnitTest_WebApi.WebApi
             var exceptionMessage = "Test exception";
 
 
-            _routeMock.Setup(r => r.getRoute(origin, destination)).ThrowsAsync(new Exception(exceptionMessage));
+            _routeMock.Setup(r => r.getRoundTripJourney(origin, destination)).ThrowsAsync(new Exception(exceptionMessage));
 
             var _journeyController = new JourneyController(_loggerMock.Object, _routeMock.Object);
             // Act

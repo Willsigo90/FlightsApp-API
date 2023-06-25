@@ -15,11 +15,11 @@ namespace DataAccess.Models
         
         public Flight(Transport transport, string origin, string destination, double price)
         {
+            this.transport = transport;
             this.origin = origin;
             this.destination = destination;
             this.price = price;
-            this.transport = transport;
-        }
+         }
         public Transport Transport
         {
             get { return transport; }

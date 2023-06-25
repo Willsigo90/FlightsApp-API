@@ -1,4 +1,5 @@
-﻿using DataAccess.DTOs;
+﻿using BusinessLayer.Interfaz;
+using DataAccess.DTOs;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -6,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer
+namespace BusinessLayer.Implementation
 {
-    public class ShortestRouteFinder: IShortestRouteFinder
+    public class ShortestRouteFinder : IShortestRouteFinder
     {
         //private Dictionary<string, List<FlightDto>>? adjacencyList;
         private ILogger<ShortestRouteFinder> _logger;

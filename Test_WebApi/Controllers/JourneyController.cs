@@ -25,6 +25,8 @@ namespace Test_WebApi.Controllers
         {
             try
             {
+                origin = origin.ToUpper();
+                destination = destination.ToUpper();
                 var routeRequest = new RouteRequestDTO
                 {
                     Origin = origin,
@@ -43,7 +45,7 @@ namespace Test_WebApi.Controllers
 
                 _logger.LogInformation("Getting Journey");
                 _logger.LogDebug($"Getting Journey for Origin: {origin} and Destination: {destination}");
-                var result = await _route.getRoute(origin, destination);
+                var result = await _route.getRoundTripJourney(origin, destination);
 
                 if (result == null)
                 {

@@ -9,6 +9,8 @@ namespace BusinessLayer.Interfaz
 {
     public interface IRoutes
     {
-        public Task<Journey> getRoute(string origin, string destination);
+        public Task<List<Journey>> getRoundTripJourney(string origin, string destination);
+        public Task<Journey> getOneWayJourney(string origin, string destination);
+        
     }
 }

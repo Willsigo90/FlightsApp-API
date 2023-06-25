@@ -1,4 +1,3 @@
-using BusinessLayer;
 using BusinessLayer.Implementation;
 using BusinessLayer.Interfaz;
 using FluentValidation;
@@ -36,6 +35,8 @@ builder.Services.AddTransient<IServiceFlights, ServiceFlights>();
 //builder.Services.AddScoped<IFlightBuilder, FlightBuilder>();
 builder.Services.AddScoped<IGraphBuilder, GraphBuilder>();
 builder.Services.AddScoped<IShortestRouteFinder, ShortestRouteFinder>();
+builder.Services.AddScoped<IJourneyBuilder, JourneyBuilder>();
+
 
 builder.Services.AddTransient<IServiceCurrency, ServiceCurrency>();
 

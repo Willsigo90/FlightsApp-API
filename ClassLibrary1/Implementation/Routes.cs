@@ -18,35 +18,105 @@ namespace BusinessLayer.Implementation
     {
         private readonly IServiceFlights _serviceFlights;
         private readonly ILogger<Routes> _logger;
-        //private readonly IFlightBuilder _flightGraph;
         private readonly IGraphBuilder _graphBuilder;
         private readonly IShortestRouteFinder _shortestRouteFinder;
+        private readonly IJourneyBuilder _journeyBuilder;
 
-        public Routes(IServiceFlights serviceFlights, ILogger<Routes> logger, IGraphBuilder graphBuilder, IShortestRouteFinder shortestRouteFinder) 
+        public Routes(IServiceFlights serviceFlights, ILogger<Routes> logger, IGraphBuilder graphBuilder, IShortestRouteFinder shortestRouteFinder, IJourneyBuilder journeyBuilder) 
         {
             _serviceFlights = serviceFlights;
             _logger = logger;
-            //_flightGraph = flightGraph;
             _graphBuilder = graphBuilder;
             _shortestRouteFinder = shortestRouteFinder;
+            _journeyBuilder = journeyBuilder;
         }
 
-        public async Task<Journey> getRoute(string origin, string destination)
+        public async Task<List<Journey>> getRoundTripJourney(string origin, string destination)
         {
             try
             {
-                origin = origin.ToUpper();
-                destination = destination.ToUpper();
+                var flights = await getFlights();
 
-                _logger.LogInformation($"Geting all Flights");
-                var flights = await _serviceFlights.GetFlights();
+                validateFlight(origin, destination, flights);
 
-                if(flights?.Count == 0)
-                {
-                    _logger.LogError("No flights found");
-                    throw new KeyNotFoundException("No flights found");
-                }
+                var graph = await buildGraphs(flights);
+                var flight = await getShortestRoute(origin, destination, graph);
+                var goingJourney = await _journeyBuilder.buildJourney(origin, destination, flight);
+                var returnJourney = await _journeyBuilder.buildJourney(destination, origin, flight);
 
+                var result = new List<Journey>();
+                result.Add(goingJourney);
+                result.Add(returnJourney);
+
+                _logger.LogInformation($"Journey found");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while getting the route: {ex.Message}");
+                throw; // Re-throw the exception to propagate it to the caller
+            }
+
+        }
+        public async Task<Journey> getOneWayJourney(string origin, string destination)
+        {
+            try
+            {
+
+                var flights = await getFlights();
+
+                validateFlight(origin, destination, flights);
+
+                var graph = await buildGraphs(flights);
+                var flight = await getShortestRoute(origin, destination, graph);
+                var journey = await _journeyBuilder.buildJourney(origin, destination, flight);
+
+                _logger.LogInformation($"Journey found");
+                return journey;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"An error occurred while getting the Journey: {ex.Message}");
+                throw; // Re-throw the exception to propagate it to the caller
+            }
+        }
+
+        private async Task<List<FlightDto>> getFlights()
+        {
+            _logger.LogInformation($"Geting all Flights");
+            var result = await _serviceFlights.GetFlights();
+
+            if (result == null)
+            {
+                _logger.LogError("No flights found");
+                throw new KeyNotFoundException("No flights found");
+            }
+
+            return result;
+        }
+
+        private async Task<Dictionary<string, List<FlightDto>>> buildGraphs(List<FlightDto> flights)
+        {
+            _logger.LogInformation($"Start Building Graph");
+            var flightGraph = await _graphBuilder.BuildGraph(flights);
+            return flightGraph;
+        }
+
+        private async Task<List<FlightDto>> getShortestRoute(string origin, string destination, Dictionary<string, List<FlightDto>> flightGraph)
+        {
+
+            _logger.LogInformation($"Finding route by origin and destination");
+
+            var route = await _shortestRouteFinder.FindShortestRoute(origin, destination, flightGraph);
+            return route;
+        }
+
+        private void validateFlight(string origin, string destination, List<FlightDto> flights)
+        {
+
+            try
+            {
                 bool hasOriginStation = flights.Any(flight =>
                 flight?.DepartureStation == origin || flight?.ArrivalStation == origin);
 
@@ -58,44 +128,14 @@ namespace BusinessLayer.Implementation
                     _logger.LogError("Origin or Destination didn't found");
                     throw new KeyNotFoundException("Origin or Destination didn't found");
                 }
-
-                _logger.LogInformation($"Start Building Graph");
-                var adjacencyList = await _graphBuilder.BuildGraph(flights);
-
-                _logger.LogInformation($"Finding route by origin and destination");
-                var shortestRoute = await _shortestRouteFinder.FindShortestRoute(origin, destination, adjacencyList);
-
-                //Map FlightDto to Flight
-                List<Flight> flightList = shortestRoute.Select(flightDto => new Flight(
-                    new Transport(flightDto.FlightCarrier, flightDto.FlightNumber),
-                    flightDto?.DepartureStation,
-                    flightDto?.ArrivalStation,
-                    flightDto.Price
-                )).ToList();
-
-
-
-                var journey = new Journey(origin, destination, shortestRoute.Sum(c => c.Price), flightList);
-
-                var journeyValidator = new JourneyValidator();
-
-                var validation = journeyValidator.Validate(journey);
-
-                if(validation.IsValid == false)
-                {
-                    var errorMessages = "Error in server site: " + validation.ToString();
-                    throw new ValidationException(errorMessages);
-                }
-
-                _logger.LogInformation($"Journey found");
-                return journey;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An error occurred while getting the route: {ex.Message}");
+
+                _logger.LogError($"An error occurred while validate flight: {ex.Message}");
                 throw; // Re-throw the exception to propagate it to the caller
             }
-
         }
+       
     }
 }
