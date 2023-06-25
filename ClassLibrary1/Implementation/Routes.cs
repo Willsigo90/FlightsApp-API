@@ -40,9 +40,10 @@ namespace BusinessLayer.Implementation
                 validateFlight(origin, destination, flights);
 
                 var graph = await buildGraphs(flights);
-                var flight = await getShortestRoute(origin, destination, graph);
-                var goingJourney = await _journeyBuilder.buildJourney(origin, destination, flight);
-                var returnJourney = await _journeyBuilder.buildJourney(destination, origin, flight);
+                var goingflight = await getShortestRoute(origin, destination, graph);
+                var returnflight = await getShortestRoute(destination, origin, graph);
+                var goingJourney = await _journeyBuilder.buildJourney(origin, destination, goingflight);
+                var returnJourney = await _journeyBuilder.buildJourney(destination, origin, returnflight);
 
                 var result = new List<Journey>();
                 result.Add(goingJourney);
